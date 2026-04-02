@@ -9,9 +9,9 @@
     <style>
         :root {
             --text-color: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.6);
-            --card-bg: rgba(10, 10, 10, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(5, 5, 5, 0.5);
+            --border-color: rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', sans-serif; }
@@ -25,24 +25,39 @@
             justify-content: center;
             overflow: hidden;
             position: relative;
+            perspective: 1000px;
         }
 
-        /* ТВОЁ НОВОЕ ФОТО В ВЫСОКОМ КАЧЕСТВЕ */
-        .bg-image {
+        /* ФОН С ПАРАЛЛАКСОМ */
+        .bg-wrapper {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: -5%; left: -5%; width: 110%; height: 110%;
+            z-index: -5;
+            transition: transform 0.2s cubic-bezier(0.2, 0.4, 0.3, 1);
+        }
+
+        .bg-image {
+            width: 100%; height: 100%;
             background: url('background.png') no-repeat center center;
             background-size: cover;
-            z-index: -2;
-            filter: brightness(0.45) contrast(1.1); /* Настроил яркость под качественное фото */
+            filter: brightness(0.3) contrast(1.1) blur(2px);
         }
 
-        #rainCanvas {
+        /* ОБЛАКА */
+        .cloud {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -3;
+            pointer-events: none;
+        }
+
+        #dynamicCanvas {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
+            z-index: -2;
             pointer-events: none;
-            opacity: 0.35;
         }
 
         .container {
@@ -51,153 +66,147 @@
             width: 100%;
             max-width: 900px;
             padding: 20px;
-            animation: slideUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            transition: transform 0.1s ease-out;
         }
 
         .header { text-align: center; margin-bottom: 60px; }
         .header h1 { 
-            font-size: 3.8rem; 
-            font-weight: 800; 
-            letter-spacing: -2px; 
-            margin-bottom: 10px;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 4rem; font-weight: 800; letter-spacing: -3px; margin-bottom: 10px;
+            text-shadow: 0 15px 40px rgba(0,0,0,1);
         }
-        .header p { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 7px; }
+        .header p { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 8px; }
 
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+            gap: 25px;
         }
 
         .project-card {
             background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
             border: 1px solid var(--border-color);
             border-radius: 35px;
             padding: 45px;
             text-decoration: none;
             color: var(--text-color);
-            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .project-card:hover {
-            transform: translateY(-12px) scale(1.03);
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(20, 20, 20, 0.85);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(20, 20, 20, 0.7);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
         }
 
-        .project-card h2 { font-size: 1.8rem; font-weight: 700; }
-        .project-card p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; flex-grow: 1; }
+        .project-card h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
+        .project-card p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; }
 
-        /* Панель управления */
         .controls-bar {
             position: fixed;
             bottom: 40px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: rgba(0, 0, 0, 0.5);
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(0,0,0,0.4);
             backdrop-filter: blur(20px);
-            padding: 10px 25px;
-            border-radius: 100px;
+            padding: 10px 25px; border-radius: 100px;
             border: 1px solid var(--border-color);
             z-index: 100;
         }
 
-        .icon-btn {
-            background: none; border: none;
-            width: 35px; height: 35px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.3s;
-        }
-
-        .icon-btn svg { fill: #fff; width: 18px; height: 18px; }
-        .icon-btn:hover { transform: scale(1.15); }
-
-        .volume-slider {
-            -webkit-appearance: none;
-            width: 70px; height: 2px;
-            background: rgba(255,255,255,0.2);
-            outline: none;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 10px; height: 10px;
-            background: #fff; border-radius: 50%; cursor: pointer;
-        }
+        .icon-btn { background: none; border: none; cursor: pointer; }
+        .icon-btn svg { fill: #fff; width: 18px; height: 18px; opacity: 0.7; }
+        .volume-slider { -webkit-appearance: none; width: 70px; height: 2px; background: rgba(255,255,255,0.1); outline: none; }
+        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
     </style>
 </head>
 <body>
 
-    <div class="bg-image"></div>
-    <canvas id="rainCanvas"></canvas>
+    <div class="bg-wrapper" id="bgWrapper">
+        <div class="bg-image"></div>
+        <div class="cloud" style="width: 600px; height: 600px; top: 10%; left: 10%;"></div>
+        <div class="cloud" style="width: 400px; height: 400px; bottom: 10%; right: 10%;"></div>
+    </div>
     
+    <canvas id="dynamicCanvas"></canvas>
     <audio id="bgMusic" src="music.mp3" loop autoplay></audio>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
         <div class="header">
             <h1>Lobedron Hub</h1>
-            <p>Creative Programs</p>
+            <p>Creative Studio</p>
         </div>
 
         <div class="projects-grid">
             <a href="https://lobedron.github.io/67-stats/" class="project-card">
                 <h2>Lob Analytics</h2>
-                <p>Профессиональная статистика канала XrayGame. Детальные графики и анализ аудитории.</p>
+                <p>Профессиональная статистика канала XrayGame. Детальные графики и анализ данных.</p>
             </a>
-
             <a href="https://lobedron.github.io/midnight-code/" class="project-card">
                 <h2>Midnight Code</h2>
-                <p>Умный редактор кода HTML, JS, CSS. Чистый интерфейс и высокая скорость работы.</p>
+                <p>Умный редактор кода. Пиши код в атмосфере ночного города с комфортом.</p>
             </a>
         </div>
     </div>
 
     <div class="controls-bar">
         <button class="icon-btn" onclick="toggleMute()">
-            <svg id="speakerIcon" viewBox="0 0 24 24">
-                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-            </svg>
+            <svg id="speakerIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
         </button>
         <input type="range" id="volSlider" class="volume-slider" min="0" max="100" value="30" oninput="updateVolume()">
     </div>
 
     <script>
-        const audio = document.getElementById('bgMusic');
-        const volSlider = document.getElementById('volSlider');
-        const canvas = document.getElementById('rainCanvas');
+        const bgWrapper = document.getElementById('bgWrapper');
+        const mainContainer = document.getElementById('mainContainer');
+        const canvas = document.getElementById('dynamicCanvas');
         const ctx = canvas.getContext('2d');
-        let drops = [];
+        const audio = document.getElementById('bgMusic');
+
+        let drops = [], stars = [];
+        let mouseX = 0, mouseY = 0;
 
         function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<100; i++) {
+                stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, blink: Math.random()*0.05, opacity: Math.random() });
+            }
             drops = [];
-            for(let i=0; i<150; i++) {
-                drops.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    l: Math.random() * 25 + 10,
-                    s: Math.random() * 12 + 6
-                });
+            for(let i=0; i<120; i++) {
+                drops.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, l: Math.random()*20+10, s: Math.random()*12+8 });
             }
         }
 
+        // ОБРАБОТКА ДВИЖЕНИЯ МЫШИ
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+
+            // Двигаем фон (медленно и плавно)
+            bgWrapper.style.transform = `translate(${mouseX * -30}px, ${mouseY * -30}px)`;
+            
+            // Двигаем контейнер (еще медленнее для эффекта 3D)
+            mainContainer.style.transform = `translate(${mouseX * 15}px, ${mouseY * 15}px)`;
+        });
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+            
+            // Звезды тоже чуть смещаются от мыши
+            stars.forEach(s => {
+                s.opacity += s.blink;
+                if(s.opacity > 1 || s.opacity < 0) s.blink = -s.blink;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.opacity)})`;
+                ctx.beginPath();
+                ctx.arc(s.x + (mouseX * 20), s.y + (mouseY * 20), s.size, 0, Math.PI*2);
+                ctx.fill();
+            });
+
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
             ctx.lineWidth = 1;
             drops.forEach(d => {
                 ctx.beginPath();
@@ -207,12 +216,13 @@
                 d.y += d.s;
                 if(d.y > canvas.height) d.y = -d.l;
             });
+
             requestAnimationFrame(draw);
         }
 
         function toggleMute() { audio.muted = !audio.muted; }
-        function updateVolume() { audio.volume = volSlider.value / 100; }
-
+        function updateVolume() { audio.volume = document.getElementById('volSlider').value / 100; }
+        
         window.addEventListener('resize', init);
         document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once:true});
 
