@@ -1,233 +1,74 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" style="--bg: #050505; --accent: #2aabee;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lobedron Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --text-color: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.5);
-            --card-bg: rgba(5, 5, 5, 0.5);
-            --border-color: rgba(255, 255, 255, 0.08);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', sans-serif; }
-
-        body {
-            background: #000;
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-            perspective: 1000px;
-        }
-
-        /* ФОН С ПАРАЛЛАКСОМ */
-        .bg-wrapper {
-            position: fixed;
-            top: -5%; left: -5%; width: 110%; height: 110%;
-            z-index: -5;
-            transition: transform 0.2s cubic-bezier(0.2, 0.4, 0.3, 1);
-        }
-
-        .bg-image {
-            width: 100%; height: 100%;
-            background: url('background.png') no-repeat center center;
-            background-size: cover;
-            filter: brightness(0.3) contrast(1.1) blur(2px);
-        }
-
-        /* ОБЛАКА */
-        .cloud {
-            position: absolute;
-            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: -3;
-            pointer-events: none;
-        }
-
-        #dynamicCanvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        .container {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            max-width: 900px;
-            padding: 20px;
-            transition: transform 0.1s ease-out;
-        }
-
-        .header { text-align: center; margin-bottom: 60px; }
-        .header h1 { 
-            font-size: 4rem; font-weight: 800; letter-spacing: -3px; margin-bottom: 10px;
-            text-shadow: 0 15px 40px rgba(0,0,0,1);
-        }
-        .header p { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 8px; }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .project-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(35px);
-            -webkit-backdrop-filter: blur(35px);
-            border: 1px solid var(--border-color);
-            border-radius: 35px;
-            padding: 45px;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: all 0.5s cubic-bezier(0.2, 1, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(20, 20, 20, 0.7);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-        }
-
-        .project-card h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 10px; }
-        .project-card p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; }
-
-        .controls-bar {
-            position: fixed;
-            bottom: 40px;
-            display: flex; align-items: center; gap: 20px;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(20px);
-            padding: 10px 25px; border-radius: 100px;
-            border: 1px solid var(--border-color);
-            z-index: 100;
-        }
-
-        .icon-btn { background: none; border: none; cursor: pointer; }
-        .icon-btn svg { fill: #fff; width: 18px; height: 18px; opacity: 0.7; }
-        .volume-slider { -webkit-appearance: none; width: 70px; height: 2px; background: rgba(255,255,255,0.1); outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: #fff; border-radius: 50%; }
-    </style>
+    <title>Midnight Code</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onclick="closeThemes()">
 
-    <div class="bg-wrapper" id="bgWrapper">
-        <div class="bg-image"></div>
-        <div class="cloud" style="width: 600px; height: 600px; top: 10%; left: 10%;"></div>
-        <div class="cloud" style="width: 400px; height: 400px; bottom: 10%; right: 10%;"></div>
-    </div>
-    
-    <canvas id="dynamicCanvas"></canvas>
-    <audio id="bgMusic" src="music.mp3" loop autoplay></audio>
-
-    <div class="container" id="mainContainer">
-        <div class="header">
-            <h1>Lobedron Hub</h1>
-            <p>Creative Studio</p>
+    <main class="main">
+        <div class="nav">
+            <div class="nav-left">
+                <div class="brand">
+                    <span class="brand-title">Midnight Code</span>
+                    <span class="brand-ver" onclick="downloadSource()">v1.6</span>
+                </div>
+                <input type="text" id="fName" value="index">
+                <select id="fExt" onchange="changeExt()">
+                    <option value=".html">.HTML</option>
+                    <option value=".css">.CSS</option>
+                    <option value=".js">.JS</option>
+                </select>
+                <div class="search-wrap">
+                    <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                    <input type="text" id="findInp" placeholder="Поиск..." oninput="hInput()" onkeydown="handleSearchKey(event)">
+                    <div id="matchCount" style="display:flex; align-items:center; gap:5px; font-size:10px; color:#666; margin-right:5px; user-select:none;">
+                        <span onclick="navSearch(-1)" style="cursor:pointer; padding:2px;">❮</span>
+                        <span id="matchInfo">0/0</span>
+                        <span onclick="navSearch(1)" style="cursor:pointer; padding:2px;">❯</span>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-center">
+                <div class="modes">
+                    <button class="m-btn" id="b1" onclick="setM('code')">Code</button>
+                    <button class="m-btn" id="b2" onclick="setM('view')">Visual</button>
+                    <button class="m-btn active" id="b3" onclick="setM('split')">Split</button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="theme-btn" onclick="event.stopPropagation(); el('tm').classList.toggle('show')">
+                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M12 3c.132 0 .263 0 .393.007a9 9 0 0 0 9.592 9.592A9 9 0 1 1 12 3z"></path></svg>
+                    <div class="theme-menu" id="tm">
+                        <div class="theme-opt" style="color:#2aabee" onclick="setT('#050505','#2aabee')">Midnight</div>
+                        <div class="theme-opt" style="color:#ffffff" onclick="setT('#000000','#ffffff')">Onyx</div>
+                        <div class="theme-opt" style="color:#39ff14" onclick="setT('#020a00','#39ff14')">Toxic</div>
+                        <div class="theme-opt" style="color:#ff3131" onclick="setT('#0a0000','#ff3131')">Crimson</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="projects-grid">
-            <a href="https://lobedron.github.io/67-stats/" class="project-card">
-                <h2>Lob Analytics</h2>
-                <p>Профессиональная статистика канала XrayGame. Детальные графики и анализ данных.</p>
-            </a>
-            <a href="https://lobedron.github.io/midnight-code/" class="project-card">
-                <h2>Midnight Code</h2>
-                <p>Умный редактор кода. Пиши код в атмосфере ночного города с комфортом.</p>
-            </a>
+        <div class="editor-wrap v-split" id="wrap">
+            <div class="code-area">
+                <div class="lines" id="lnBox">1</div>
+                <div class="editor-container">
+                    <div class="syntax-highlight" id="syntaxHighlight"></div>
+                    <textarea id="edit" spellcheck="false" oninput="hInput()" onkeydown="handleKeys(event)" onscroll="syncScroll()"></textarea>
+                </div>
+            </div>
+            <div class="preview"><iframe id="ifr"></iframe></div>
         </div>
-    </div>
 
-    <div class="controls-bar">
-        <button class="icon-btn" onclick="toggleMute()">
-            <svg id="speakerIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-        </button>
-        <input type="range" id="volSlider" class="volume-slider" min="0" max="100" value="30" oninput="updateVolume()">
-    </div>
+        <div class="footer">
+            <button class="btn btn-i" onclick="el('fileIn').click()">Импорт</button>
+            <button class="btn btn-p" onclick="exp()">Экспорт</button>
+        </div>
+    </main>
 
-    <script>
-        const bgWrapper = document.getElementById('bgWrapper');
-        const mainContainer = document.getElementById('mainContainer');
-        const canvas = document.getElementById('dynamicCanvas');
-        const ctx = canvas.getContext('2d');
-        const audio = document.getElementById('bgMusic');
-
-        let drops = [], stars = [];
-        let mouseX = 0, mouseY = 0;
-
-        function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            stars = [];
-            for(let i=0; i<100; i++) {
-                stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2, blink: Math.random()*0.05, opacity: Math.random() });
-            }
-            drops = [];
-            for(let i=0; i<120; i++) {
-                drops.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, l: Math.random()*20+10, s: Math.random()*12+8 });
-            }
-        }
-
-        // ОБРАБОТКА ДВИЖЕНИЯ МЫШИ
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth) - 0.5;
-            mouseY = (e.clientY / window.innerHeight) - 0.5;
-
-            // Двигаем фон (медленно и плавно)
-            bgWrapper.style.transform = `translate(${mouseX * -30}px, ${mouseY * -30}px)`;
-            
-            // Двигаем контейнер (еще медленнее для эффекта 3D)
-            mainContainer.style.transform = `translate(${mouseX * 15}px, ${mouseY * 15}px)`;
-        });
-
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Звезды тоже чуть смещаются от мыши
-            stars.forEach(s => {
-                s.opacity += s.blink;
-                if(s.opacity > 1 || s.opacity < 0) s.blink = -s.blink;
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.opacity)})`;
-                ctx.beginPath();
-                ctx.arc(s.x + (mouseX * 20), s.y + (mouseY * 20), s.size, 0, Math.PI*2);
-                ctx.fill();
-            });
-
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-            ctx.lineWidth = 1;
-            drops.forEach(d => {
-                ctx.beginPath();
-                ctx.moveTo(d.x, d.y);
-                ctx.lineTo(d.x, d.y + d.l);
-                ctx.stroke();
-                d.y += d.s;
-                if(d.y > canvas.height) d.y = -d.l;
-            });
-
-            requestAnimationFrame(draw);
-        }
-
-        function toggleMute() { audio.muted = !audio.muted; }
-        function updateVolume() { audio.volume = document.getElementById('volSlider').value / 100; }
-        
-        window.addEventListener('resize', init);
-        document.body.addEventListener('click', () => { if(audio.paused) audio.play(); }, {once:true});
-
-        init();
-        draw();
-    </script>
+    <input type="file" id="fileIn" style="display:none" onchange="hImport(this)">
+    <script src="script.js"></script>
 </body>
 </html>
