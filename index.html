@@ -1,74 +1,46 @@
 <!DOCTYPE html>
-<html lang="ru" style="--bg: #050505; --accent: #2aabee;">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Midnight Code</title>
+    <title>Lobedron Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body onclick="closeThemes()">
+<body>
+    <div class="bg-wrapper" id="bgWrapper">
+        <div class="bg-image"></div>
+        <div class="cloud" style="width: 600px; height: 600px; top: 10%; left: 10%;"></div>
+        <div class="cloud" style="width: 400px; height: 400px; bottom: 10%; right: 10%;"></div>
+    </div>
 
-    <main class="main">
-        <div class="nav">
-            <div class="nav-left">
-                <div class="brand">
-                    <span class="brand-title">Midnight Code</span>
-                    <span class="brand-ver" onclick="downloadSource()">v1.6</span>
-                </div>
-                <input type="text" id="fName" value="index">
-                <select id="fExt" onchange="changeExt()">
-                    <option value=".html">.HTML</option>
-                    <option value=".css">.CSS</option>
-                    <option value=".js">.JS</option>
-                </select>
-                <div class="search-wrap">
-                    <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
-                    <input type="text" id="findInp" placeholder="Поиск..." oninput="hInput()" onkeydown="handleSearchKey(event)">
-                    <div id="matchCount" style="display:flex; align-items:center; gap:5px; font-size:10px; color:#666; margin-right:5px; user-select:none;">
-                        <span onclick="navSearch(-1)" style="cursor:pointer; padding:2px;">❮</span>
-                        <span id="matchInfo">0/0</span>
-                        <span onclick="navSearch(1)" style="cursor:pointer; padding:2px;">❯</span>
-                    </div>
-                </div>
-            </div>
-            <div class="nav-center">
-                <div class="modes">
-                    <button class="m-btn" id="b1" onclick="setM('code')">Code</button>
-                    <button class="m-btn" id="b2" onclick="setM('view')">Visual</button>
-                    <button class="m-btn active" id="b3" onclick="setM('split')">Split</button>
-                </div>
-            </div>
-            <div class="nav-right">
-                <div class="theme-btn" onclick="event.stopPropagation(); el('tm').classList.toggle('show')">
-                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M12 3c.132 0 .263 0 .393.007a9 9 0 0 0 9.592 9.592A9 9 0 1 1 12 3z"></path></svg>
-                    <div class="theme-menu" id="tm">
-                        <div class="theme-opt" style="color:#2aabee" onclick="setT('#050505','#2aabee')">Midnight</div>
-                        <div class="theme-opt" style="color:#ffffff" onclick="setT('#000000','#ffffff')">Onyx</div>
-                        <div class="theme-opt" style="color:#39ff14" onclick="setT('#020a00','#39ff14')">Toxic</div>
-                        <div class="theme-opt" style="color:#ff3131" onclick="setT('#0a0000','#ff3131')">Crimson</div>
-                    </div>
-                </div>
-            </div>
+    <canvas id="dynamicCanvas"></canvas>
+    <audio id="bgMusic" src="music.mp3" loop autoplay></audio>
+
+    <div class="container" id="mainContainer">
+        <div class="header">
+            <h1>Lobedron Hub</h1>
+            <p>Creative Studio</p>
         </div>
-
-        <div class="editor-wrap v-split" id="wrap">
-            <div class="code-area">
-                <div class="lines" id="lnBox">1</div>
-                <div class="editor-container">
-                    <div class="syntax-highlight" id="syntaxHighlight"></div>
-                    <textarea id="edit" spellcheck="false" oninput="hInput()" onkeydown="handleKeys(event)" onscroll="syncScroll()"></textarea>
-                </div>
-            </div>
-            <div class="preview"><iframe id="ifr"></iframe></div>
+        <div class="projects-grid">
+            <a href="https://lobedron.github.io/67-stats/" class="project-card">
+                <h2>Lob Analytics</h2>
+                <p>Профессиональная статистика канала XrayGame. Детальные графики и анализ данных.</p>
+            </a>
+            <a href="https://lobedron.github.io/midnight-code/" class="project-card">
+                <h2>Midnight Code</h2>
+                <p>Умный редактор кода. Пиши код в атмосфере ночного города с комфортом.</p>
+            </a>
         </div>
+    </div>
 
-        <div class="footer">
-            <button class="btn btn-i" onclick="el('fileIn').click()">Импорт</button>
-            <button class="btn btn-p" onclick="exp()">Экспорт</button>
-        </div>
-    </main>
+    <div class="controls-bar">
+        <button class="icon-btn" onclick="toggleMute()">
+            <svg id="speakerIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        </button>
+        <input type="range" id="volSlider" class="volume-slider" min="0" max="100" value="30" oninput="updateVolume()">
+    </div>
 
-    <input type="file" id="fileIn" style="display:none" onchange="hImport(this)">
     <script src="script.js"></script>
 </body>
 </html>
