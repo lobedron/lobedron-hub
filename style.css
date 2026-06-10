@@ -13,7 +13,7 @@
 }
 
 body { 
-    background: #050505; /* Минималистичный темный фон */
+    background: #050505; 
     color: var(--text-color); 
     min-height: 100vh; 
     display: flex; 
@@ -46,7 +46,7 @@ body {
 
 .projects-grid { 
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Чуть уменьшил размер для ровного ряда из 3 карточек */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
     gap: 25px; 
 }
 
