@@ -13,22 +13,22 @@
 }
 
 body { 
-    background: #050505; 
+    background: #050505; /* Минималистичный темный фон */
     color: var(--text-color); 
     min-height: 100vh; 
     display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    /* overflow: hidden; убрано, чтобы страница скроллилась, если карточек станет больше */
-    position: relative; 
+    flex-direction: column; /* Элементы идут строго друг под другом */
+    align-items: center;    /* Центрирование по горизонтали */
+    padding: 40px 20px;
 }
 
 .container { 
-    position: relative; 
-    z-index: 10; 
     width: 100%; 
     max-width: 900px; 
-    padding: 40px 20px; 
+    flex-grow: 1; /* Контейнер растягивается, чтобы футер был внизу */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Центрируем основной контент по вертикали */
 }
 
 .header { 
@@ -41,13 +41,13 @@ body {
     font-weight: 800; 
     letter-spacing: -3px; 
     margin-bottom: 10px; 
-    text-shadow: 0 15px 40px rgba(0,0,0,0.5); 
 }
 
 .projects-grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
     gap: 25px; 
+    width: 100%;
 }
 
 .project-card { 
@@ -81,11 +81,14 @@ body {
     font-size: 1rem; 
     line-height: 1.8; 
 }
+
+/* Футер с иконками */
 .footer-socials {
     display: flex;
     justify-content: center;
     gap: 30px;
     margin-top: 50px;
+    padding-bottom: 20px;
     opacity: 0.6;
     transition: opacity 0.3s;
 }
